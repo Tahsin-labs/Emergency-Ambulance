@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import Image from "next/image";
 import { User as UserIcon, Camera, Upload, Loader2, CheckCircle2 } from "lucide-react";
 
 export default function PatientProfilePage() {
@@ -122,13 +123,14 @@ export default function PatientProfilePage() {
         </CardHeader>
         <CardContent className="flex flex-col sm:flex-row items-center gap-6">
           <div className="relative group">
-            <div className="h-24 w-24 rounded-full overflow-hidden border-2 border-red-500 bg-muted flex items-center justify-center text-muted-foreground">
+            <div className="relative h-24 w-24 rounded-full overflow-hidden border-2 border-red-500 bg-muted flex items-center justify-center text-muted-foreground">
               {profile?.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={profile.avatarUrl}
-                  alt={profile.name}
-                  className="h-full w-full object-cover"
+                  alt={profile.name || "Profile Avatar"}
+                  fill
+                  sizes="96px"
+                  className="object-cover"
                 />
               ) : (
                 <UserIcon className="h-12 w-12 text-muted-foreground" />
