@@ -7,15 +7,22 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CreditCard, CheckCircle2, Download, Printer, Ambulance } from "lucide-react";
+import { CreditCard, Printer } from "lucide-react";
 
 export default function PatientPaymentsPage() {
   const { data, isLoading } = useQuery({
-    queryKey: ["patient-trips"],
-    queryFn: () => apiFetch<{ trips: Trip[] }>("/trips/me"),
+    queryKey: ["patient-requests"],
+    queryFn: () => apiFetch<any[]>("/emergency-requests/my"),
   });
 
-  const trips = (data?.data as any) || [];
+  const requests = (data?.data as any) || [];
+  const trips: Trip[] = requests
+    .filter((r: any) => r.trip)
+    .map((r: any) => ({
+      ...r.trip,
+      request: r,
+    }));
+
   const paidTrips = trips.filter((t: Trip) => t.payment && t.payment.status === "PAID");
 
   const printReceipt = (trip: Trip) => {
@@ -40,9 +47,9 @@ export default function PatientPaymentsPage() {
         <Card className="text-center py-12">
           <CardContent className="space-y-3">
             <CreditCard className="h-10 w-10 text-muted-foreground mx-auto" />
-            <h3 className="font-semibold text-lg">No payment transactions yet</h3>
+            <h3 className="font-semibold text-lg">No settled payments yet</h3>
             <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-              Completed trips with settled payments will automatically generate downloadable invoices here.
+              Completed trips with payments settled via SSLCommerz will generate receipts here.
             </p>
           </CardContent>
         </Card>

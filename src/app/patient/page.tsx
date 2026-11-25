@@ -8,12 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PhoneCall, Navigation, ArrowRight, Ambulance, CheckCircle, Clock } from "lucide-react";
+import { PhoneCall, Navigation, ArrowRight, Ambulance } from "lucide-react";
 
 export default function PatientDashboard() {
-  const { data: tripsData, isLoading: tripsLoading } = useQuery({
-    queryKey: ["patient-trips"],
-    queryFn: () => apiFetch<{ trips: Trip[] }>("/trips/me"),
+  const { data: requestsData, isLoading: tripsLoading } = useQuery({
+    queryKey: ["patient-requests"],
+    queryFn: () => apiFetch<any[]>("/emergency-requests/my"),
   });
 
   const { data: notificationsData } = useQuery({
@@ -21,7 +21,14 @@ export default function PatientDashboard() {
     queryFn: () => apiFetch<NotificationItem[]>("/notifications"),
   });
 
-  const trips = (tripsData?.data as any) || [];
+  const requests = (requestsData?.data as any) || [];
+  const trips: Trip[] = requests
+    .filter((r: any) => r.trip)
+    .map((r: any) => ({
+      ...r.trip,
+      request: r,
+    }));
+
   const activeTrip = trips.find(
     (t: Trip) => t.status !== "COMPLETED" && t.status !== "CANCELLED"
   );
@@ -78,7 +85,7 @@ export default function PatientDashboard() {
         {/* Recent Trips */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">Recent Trips</CardTitle>
+            <CardTitle className="text-lg">Recent Emergency Dispatches</CardTitle>
             <Button asChild variant="ghost" size="sm">
               <Link href="/patient/trips">
                 View all <ArrowRight className="ml-1 h-4 w-4" />
@@ -93,7 +100,7 @@ export default function PatientDashboard() {
               </div>
             ) : trips.length === 0 ? (
               <div className="text-center py-6 text-sm text-muted-foreground">
-                No trips booked yet.
+                No active or past trips yet.
               </div>
             ) : (
               trips.slice(0, 4).map((trip: Trip) => (
@@ -124,7 +131,7 @@ export default function PatientDashboard() {
                   </div>
                   <div className="text-right">
                     <div className="text-xs font-bold">
-                      {trip.fare ? `৳${trip.fare}` : "Calculating"}
+                      {trip.fare ? `৳${trip.fare}` : "Active run"}
                     </div>
                     <div className="text-[10px] text-muted-foreground">
                       {new Date(trip.createdAt).toLocaleDateString()}

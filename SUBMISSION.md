@@ -12,9 +12,9 @@
 
 | Role | Email | Password | Assigned Vehicle |
 | :--- | :--- | :--- | :--- |
-| **ADMIN** | `admin@ambulance.com` | `Admin123!` | Master Governance & Audit |
-| **DRIVER** | `driver3@ambulance.com` | `Driver123!` | ICU Unit (`DHAKA-METRO-CH-11-1003`) |
-| **PATIENT** | `patient1@example.com` | `Patient123!` | Emergency Booking & Payment |
+| **ADMIN** | `admin@ambulance.com` | `Admin@123456` | Master Governance & Audit |
+| **DRIVER** | `driver3@ambulance.com` | `Driver@123456` | ICU Unit (`DHAKA-METRO-CH-11-1003`) |
+| **PATIENT** | `patient1@example.com` | `Patient@123456` | Emergency Booking & Payment |
 
 ---
 

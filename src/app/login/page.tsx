@@ -155,7 +155,7 @@ function LoginForm() {
             {/* Patient Demo */}
             <Card
               className="cursor-pointer hover:border-red-600 transition shadow-sm hover:shadow"
-              onClick={() => handleDemoLogin("patient1@example.com", "Patient123!")}
+              onClick={() => handleDemoLogin("patient1@example.com", "Patient@123456")}
             >
               <CardContent className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -177,7 +177,7 @@ function LoginForm() {
             {/* Driver Demo */}
             <Card
               className="cursor-pointer hover:border-red-600 transition shadow-sm hover:shadow"
-              onClick={() => handleDemoLogin("driver3@ambulance.com", "Driver123!")}
+              onClick={() => handleDemoLogin("driver3@ambulance.com", "Driver@123456")}
             >
               <CardContent className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -199,7 +199,7 @@ function LoginForm() {
             {/* Admin Demo */}
             <Card
               className="cursor-pointer hover:border-red-600 transition shadow-sm hover:shadow"
-              onClick={() => handleDemoLogin("admin@ambulance.com", "Admin123!")}
+              onClick={() => handleDemoLogin("admin@ambulance.com", "Admin@123456")}
             >
               <CardContent className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">

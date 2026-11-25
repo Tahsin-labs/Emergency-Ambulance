@@ -90,10 +90,9 @@ export default function RequestAmbulancePage() {
       const request = res.data;
       toast.success("Emergency request lodged! Priority engine is finding nearest unit...");
 
-      // Automatically trigger dispatch
-      const dispatchRes = await apiFetch("/dispatch", {
+      // Automatically trigger dispatch using backend endpoint /emergency-requests/:id/dispatch
+      const dispatchRes = await apiFetch(`/emergency-requests/${request.id}/dispatch`, {
         method: "POST",
-        body: JSON.stringify({ requestId: request.id }),
       });
 
       if (dispatchRes.success && dispatchRes.data?.trip) {

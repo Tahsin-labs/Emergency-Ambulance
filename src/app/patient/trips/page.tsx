@@ -8,15 +8,21 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Navigation, Clock, MapPin, Ambulance } from "lucide-react";
+import { Ambulance, MapPin } from "lucide-react";
 
 export default function PatientTripsPage() {
   const { data, isLoading } = useQuery({
-    queryKey: ["patient-trips"],
-    queryFn: () => apiFetch<{ trips: Trip[] }>("/trips/me"),
+    queryKey: ["patient-requests"],
+    queryFn: () => apiFetch<any[]>("/emergency-requests/my"),
   });
 
-  const trips = (data?.data as any) || [];
+  const requests = (data?.data as any) || [];
+  const trips: Trip[] = requests
+    .filter((r: any) => r.trip)
+    .map((r: any) => ({
+      ...r.trip,
+      request: r,
+    }));
 
   return (
     <div className="space-y-6">

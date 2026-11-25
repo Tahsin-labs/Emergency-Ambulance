@@ -19,9 +19,9 @@ Directly selectable on [`/login`](/login):
 
 | Role | Email | Password | Capabilities |
 | :--- | :--- | :--- | :--- |
-| **Admin** | `admin@ambulance.com` | `Admin123!` | Dashboard Analytics, Fleet CRUD, Hospitals, User Management |
-| **Driver (ICU)** | `driver3@ambulance.com` | `Driver123!` | Duty Toggle, ICU Assignment, State Machine Transitions |
-| **Patient** | `patient1@example.com` | `Patient123!` | Emergency Triage Booking, Live Polling Tracking, SSLCommerz Pay |
+| **Admin** | `admin@ambulance.com` | `Admin@123456` | Dashboard Analytics, Fleet CRUD, Hospitals, User Management |
+| **Driver (ICU)** | `driver3@ambulance.com` | `Driver@123456` | Duty Toggle, ICU Assignment, State Machine Transitions |
+| **Patient** | `patient1@example.com` | `Patient@123456` | Emergency Triage Booking, Live Polling Tracking, SSLCommerz Pay |
 
 ---
 
