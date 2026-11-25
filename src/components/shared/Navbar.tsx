@@ -104,7 +104,8 @@ export function Navbar() {
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            aria-label="Toggle theme"
+            aria-label="Toggle color theme"
+            className="focus-visible:ring-2 focus-visible:ring-red-600"
           >
             <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -142,7 +143,8 @@ export function Navbar() {
                 variant="ghost"
                 size="sm"
                 onClick={() => logout()}
-                className="text-muted-foreground hover:text-red-600"
+                aria-label="Log out of session"
+                className="text-muted-foreground hover:text-red-600 focus-visible:ring-2 focus-visible:ring-red-600"
               >
                 <LogOut className="h-4 w-4" />
               </Button>
@@ -165,6 +167,8 @@ export function Navbar() {
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            aria-label="Toggle color theme mobile"
+            className="focus-visible:ring-2 focus-visible:ring-red-600"
           >
             <Sun className="h-5 w-5 rotate-0 scale-100 dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-5 w-5 rotate-90 scale-0 dark:rotate-0 dark:scale-100" />
@@ -173,6 +177,8 @@ export function Navbar() {
             variant="ghost"
             size="icon"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
+            className="focus-visible:ring-2 focus-visible:ring-red-600"
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>

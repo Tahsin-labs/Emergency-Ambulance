@@ -142,6 +142,7 @@ export default function AdminAmbulancesPage() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowAddModal(false)}
+                aria-label="Close modal dialog"
               >
                 <X className="h-4 w-4" />
               </Button>
