@@ -3,29 +3,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { DynamicBarChart, DynamicPieChart } from "@/components/charts/AdminCharts";
 import {
   Users,
   Ambulance,
-  Navigation,
   CreditCard,
-  Building2,
-  TrendingUp,
   Activity,
-  AlertTriangle,
 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
 
 export default function AdminDashboardPage() {
   const { data, isLoading } = useQuery({
@@ -122,21 +106,14 @@ export default function AdminDashboardPage() {
         </Card>
       </div>
 
-      {/* Analytics Charts */}
+      {/* Analytics Charts (Dynamically Loaded) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Monthly Revenue Trend (BDT)</CardTitle>
           </CardHeader>
           <CardContent className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={revenueMonthly}>
-                <XAxis dataKey="month" stroke="#888888" fontSize={12} />
-                <YAxis stroke="#888888" fontSize={12} />
-                <Tooltip />
-                <Bar dataKey="revenue" fill="#DC2626" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <DynamicBarChart data={revenueMonthly} />
           </CardContent>
         </Card>
 
@@ -145,24 +122,7 @@ export default function AdminDashboardPage() {
             <CardTitle className="text-base">Trips by Clinical Priority</CardTitle>
           </CardHeader>
           <CardContent className="h-64 flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={priorityData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={50}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {priorityData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            <DynamicPieChart data={priorityData} />
           </CardContent>
         </Card>
       </div>
