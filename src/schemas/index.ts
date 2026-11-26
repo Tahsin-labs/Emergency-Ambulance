@@ -19,6 +19,26 @@ export const registerSchema = z.object({
     .regex(/[0-9]/, "Password must contain at least one number"),
 });
 
+export const registerDriverSchema = z.object({
+  name: z.string({ required_error: "Name is required" }).min(2, "Name must be at least 2 characters"),
+  email: z.string({ required_error: "Email is required" }).email("Please enter a valid email address"),
+  phone: z
+    .string()
+    .regex(/^(?:\+8801|01)[3-9]\d{8}$/, "Enter valid Bangladesh phone number (e.g. +8801711000000 or 01711000000)")
+    .optional(),
+  password: z
+    .string({ required_error: "Password is required" })
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number"),
+  licenseNumber: z
+    .string({ required_error: "License number is required" })
+    .min(3, "License number must be at least 3 characters"),
+});
+
+export type RegisterDriverInput = z.infer<typeof registerDriverSchema>;
+
 export const updateProfileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").optional(),
   phone: z

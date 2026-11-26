@@ -174,7 +174,51 @@ function LoginForm() {
               </CardContent>
             </Card>
 
-            {/* Driver Demo */}
+            {/* Driver 1 (Basic) Demo */}
+            <Card
+              className="cursor-pointer hover:border-red-600 transition shadow-sm hover:shadow"
+              onClick={() => handleDemoLogin("driver1@ambulance.com", "Driver@123456")}
+            >
+              <CardContent className="p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                    <Car className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-sm">Karim (BASIC Ambulance)</span>
+                      <Badge variant="outline" className="text-[10px]">DRIVER 1</Badge>
+                    </div>
+                    <div className="text-xs text-muted-foreground">driver1@ambulance.com</div>
+                  </div>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              </CardContent>
+            </Card>
+
+            {/* Driver 2 (Advanced) Demo */}
+            <Card
+              className="cursor-pointer hover:border-red-600 transition shadow-sm hover:shadow"
+              onClick={() => handleDemoLogin("driver2@ambulance.com", "Driver@123456")}
+            >
+              <CardContent className="p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+                    <Car className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-sm">Sultana (ADVANCED Ambulance)</span>
+                      <Badge variant="outline" className="text-[10px]">DRIVER 2</Badge>
+                    </div>
+                    <div className="text-xs text-muted-foreground">driver2@ambulance.com</div>
+                  </div>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              </CardContent>
+            </Card>
+
+            {/* Driver 3 (ICU) Demo */}
             <Card
               className="cursor-pointer hover:border-red-600 transition shadow-sm hover:shadow"
               onClick={() => handleDemoLogin("driver3@ambulance.com", "Driver@123456")}
@@ -186,8 +230,8 @@ function LoginForm() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm">ICU Ambulance Driver</span>
-                      <Badge variant="warning" className="text-[10px]">DRIVER</Badge>
+                      <span className="font-semibold text-sm">Rafiqul (ICU Ambulance)</span>
+                      <Badge variant="warning" className="text-[10px]">DRIVER 3</Badge>
                     </div>
                     <div className="text-xs text-muted-foreground">driver3@ambulance.com</div>
                   </div>
