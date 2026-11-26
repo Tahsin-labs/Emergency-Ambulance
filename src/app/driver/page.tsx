@@ -26,6 +26,7 @@ export default function DriverCockpitPage() {
   const queryClient = useQueryClient();
   const [updating, setUpdating] = useState(false);
   const [selectedHospitalId, setSelectedHospitalId] = useState("");
+  const [showAcceptConfirm, setShowAcceptConfirm] = useState(false);
 
   // Get current active trip for driver
   const { data: tripData, isLoading: tripLoading } = useQuery({
@@ -234,17 +235,65 @@ export default function DriverCockpitPage() {
                   Trip State Machine Execution Controls
                 </div>
 
-                <div className="flex flex-wrap gap-2">
-                  {trip.status === "ACCEPTED" && (
-                    <Button
-                      variant="emergency"
-                      onClick={() => transitionTrip("EN_ROUTE")}
-                      disabled={updating}
-                    >
-                      Depart: Start Moving (EN_ROUTE)
-                    </Button>
-                  )}
+                {trip.status === "DISPATCHED" && (
+                  <div className="rounded-lg border-2 border-emerald-500/40 bg-emerald-500/5 p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <div className="text-sm font-bold text-emerald-600 flex items-center gap-1.5">
+                          <CheckCircle2 className="h-4 w-4" />
+                          New Emergency Assignment Dispatched
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Review pickup coordinates and patient symptom above. Accept the dispatch to begin moving toward the patient.
+                        </p>
+                      </div>
+                    </div>
 
+                    {!showAcceptConfirm ? (
+                      <Button
+                        variant="default"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                        onClick={() => setShowAcceptConfirm(true)}
+                        disabled={updating}
+                      >
+                        <Navigation className="h-4 w-4 mr-2" />
+                        Accept & Start Trip (EN ROUTE)
+                      </Button>
+                    ) : (
+                      <div className="flex items-center gap-2 p-3 bg-background rounded-md border border-emerald-500/30">
+                        <span className="text-xs font-semibold">
+                          Confirm dispatch acceptance and start sirens?
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setShowAcceptConfirm(false)}
+                          disabled={updating}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          size="sm"
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                          onClick={async () => {
+                            setShowAcceptConfirm(false);
+                            await transitionTrip("EN_ROUTE");
+                          }}
+                          disabled={updating}
+                        >
+                          {updating ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                          ) : (
+                            <CheckCircle2 className="h-4 w-4 mr-1" />
+                          )}
+                          Confirm & Depart
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="flex flex-wrap gap-2 pt-2">
                   {trip.status === "EN_ROUTE" && (
                     <Button
                       variant="emergency"
