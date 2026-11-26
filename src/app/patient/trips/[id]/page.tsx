@@ -271,7 +271,7 @@ export default function PatientTripDetailsPage({
               <div className="font-bold text-base">{trip.hospital.name}</div>
               <div className="text-muted-foreground">{trip.hospital.address}</div>
               <div className="text-xs text-emerald-600 font-semibold mt-1">
-                Emergency ICU Beds: {trip.hospital.icuBedsAvailable} available
+                Available Beds: {trip.hospital.availableBeds} / {trip.hospital.totalBeds}
               </div>
             </div>
           ) : (
