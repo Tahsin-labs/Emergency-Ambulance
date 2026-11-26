@@ -49,7 +49,7 @@ export const emergencyRequestSchema = z.object({
 });
 
 export const driverAvailabilitySchema = z.object({
-  status: z.enum(["OFF_DUTY", "AVAILABLE"]),
+  isOnDuty: z.boolean({ required_error: "isOnDuty is required" }),
 });
 
 export const driverLocationSchema = z.object({
@@ -64,17 +64,23 @@ export const ambulanceSchema = z.object({
   perKmRate: z.number().positive("Per km rate must be a positive number"),
 });
 
-export const hospitalSchema = z.object({
-  name: z.string().min(3, "Hospital name must be at least 3 characters"),
-  address: z.string().min(5, "Address must be at least 5 characters"),
-  lat: z.number().min(-90).max(90),
-  lng: z.number().min(-180).max(180),
-  contactNumber: z.string().min(7, "Contact number is required"),
-  icuBedsTotal: z.number().int().nonnegative("Total ICU beds must be non-negative"),
-  icuBedsAvailable: z.number().int().nonnegative("Available ICU beds must be non-negative"),
-  generalBedsTotal: z.number().int().nonnegative("Total general beds must be non-negative"),
-  generalBedsAvailable: z.number().int().nonnegative("Available general beds must be non-negative"),
-});
+export const hospitalSchema = z
+  .object({
+    name: z.string({ required_error: "Hospital name is required" }).min(2, "Name must be at least 2 characters"),
+    address: z.string({ required_error: "Address is required" }).min(3, "Address must be at least 3 characters"),
+    city: z.string({ required_error: "City is required" }).min(2, "City must be at least 2 characters"),
+    lat: z.coerce.number({ required_error: "Latitude is required" }).min(-90).max(90),
+    lng: z.coerce.number({ required_error: "Longitude is required" }).min(-180).max(180),
+    phone: z.string({ required_error: "Phone number is required" }).min(5, "Valid phone number is required"),
+    specialties: z.array(z.string()).min(1, "At least one specialty is required"),
+    totalBeds: z.coerce.number().int().positive("Total beds must be a positive integer"),
+    availableBeds: z.coerce.number().int().min(0, "Available beds cannot be negative"),
+    hasEmergency: z.coerce.boolean().default(true),
+  })
+  .refine((data) => data.availableBeds <= data.totalBeds, {
+    message: "Available beds cannot exceed total beds",
+    path: ["availableBeds"],
+  });
 
 export const reviewSchema = z.object({
   rating: z.number().int().min(1, "Minimum rating is 1").max(5, "Maximum rating is 5"),

@@ -43,15 +43,15 @@ export default function DriverCockpitPage() {
   const trip = tripData?.data;
   const hospitals = hospitalsData?.data || [];
 
-  // Duty toggle
-  const toggleDuty = async (newStatus: "AVAILABLE" | "OFF_DUTY") => {
+  // Duty toggle: Backend requires { isOnDuty: boolean }
+  const toggleDuty = async (isOnDuty: boolean) => {
     try {
       setUpdating(true);
       await apiFetch("/drivers/me/availability", {
         method: "PATCH",
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ isOnDuty }),
       });
-      toast.success(`Duty status updated to ${newStatus}`);
+      toast.success(`Duty status updated to ${isOnDuty ? "On Duty" : "Off Duty"}`);
       queryClient.invalidateQueries({ queryKey: ["driver-current-trip"] });
     } catch (err: any) {
       toast.error(err.message || "Failed to update duty status");
@@ -120,7 +120,7 @@ export default function DriverCockpitPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => toggleDuty("AVAILABLE")}
+              onClick={() => toggleDuty(true)}
               disabled={updating}
               className="text-emerald-600 border-emerald-600 hover:bg-emerald-50"
             >
@@ -130,7 +130,7 @@ export default function DriverCockpitPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => toggleDuty("OFF_DUTY")}
+              onClick={() => toggleDuty(false)}
               disabled={updating}
               className="text-muted-foreground"
             >
@@ -195,7 +195,7 @@ export default function DriverCockpitPage() {
                       <div className="font-semibold text-sm">{trip.hospital.name}</div>
                       <div className="text-xs text-muted-foreground">{trip.hospital.address}</div>
                       <div className="text-xs text-emerald-600 font-semibold">
-                        Available ICU Beds: {trip.hospital.icuBedsAvailable}
+                        Available Beds: {trip.hospital.availableBeds} / {trip.hospital.totalBeds}
                       </div>
                     </div>
                   ) : (
@@ -211,7 +211,7 @@ export default function DriverCockpitPage() {
                         <option value="">-- Choose Hospital --</option>
                         {hospitals.map((h: Hospital) => (
                           <option key={h.id} value={h.id}>
-                            {h.name} (ICU: {h.icuBedsAvailable})
+                            {h.name} (Beds: {h.availableBeds}/{h.totalBeds})
                           </option>
                         ))}
                       </select>
