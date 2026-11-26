@@ -95,12 +95,13 @@ export default function PatientTripDetailsPage({
     }
   };
 
-  // SSLCommerz payment initiation
+  // SSLCommerz payment initiation: Backend expects POST /payments/initiate with body { tripId }
   const handlePayment = async () => {
     try {
       setPaying(true);
-      const res = await apiFetch(`/payments/initiate/${id}`, {
+      const res = await apiFetch("/payments/initiate", {
         method: "POST",
+        body: JSON.stringify({ tripId: id }),
       });
       if (res.data?.paymentUrl) {
         toast.info("Redirecting to SSLCommerz Sandbox Gateway...");
@@ -150,8 +151,8 @@ export default function PatientTripDetailsPage({
                 trip.status === "COMPLETED"
                   ? "success"
                   : trip.status === "CANCELLED"
-                  ? "destructive"
-                  : "warning"
+                    ? "destructive"
+                    : "warning"
               }
             >
               {trip.status.replace(/_/g, " ")}
@@ -244,13 +245,12 @@ export default function PatientTripDetailsPage({
               return (
                 <div
                   key={step}
-                  className={`p-2 rounded-lg border transition ${
-                    current
+                  className={`p-2 rounded-lg border transition ${current
                       ? "border-red-600 bg-red-500/10 font-bold text-red-600 animate-pulse"
                       : done
-                      ? "border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                      : "text-muted-foreground bg-muted/20"
-                  }`}
+                        ? "border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                        : "text-muted-foreground bg-muted/20"
+                    }`}
                 >
                   <div className="font-semibold">{idx + 1}</div>
                   <div className="text-[10px] mt-1 leading-tight">{step.replace(/_/g, " ")}</div>
