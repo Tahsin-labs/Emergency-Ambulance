@@ -113,7 +113,7 @@ export function Navbar() {
 
           {user && (
             <Button asChild variant="ghost" size="icon" className="relative" aria-label="Notifications">
-              <Link href="/patient/notifications">
+              <Link href="/notifications">
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
                   <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[9px] font-bold text-white">
@@ -219,7 +219,7 @@ export function Navbar() {
             </Link>
             {user && (
               <Link
-                href="/patient/notifications"
+                href="/notifications"
                 onClick={() => setMobileMenuOpen(false)}
                 className="px-2 py-1.5 rounded hover:bg-muted flex items-center justify-between"
               >

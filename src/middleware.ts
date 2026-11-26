@@ -10,6 +10,16 @@ export function middleware(request: NextRequest) {
   const isAdminPath = pathname.startsWith("/admin");
   const isDriverPath = pathname.startsWith("/driver");
   const isPatientPath = pathname.startsWith("/patient");
+  const isNotificationsPath = pathname.startsWith("/notifications");
+
+  if (isNotificationsPath) {
+    if (!accessToken) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    return NextResponse.next();
+  }
 
   if (isAdminPath || isDriverPath || isPatientPath) {
     if (!accessToken) {
@@ -33,5 +43,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/driver/:path*", "/patient/:path*"],
+  matcher: ["/admin/:path*", "/driver/:path*", "/patient/:path*", "/notifications/:path*"],
 };
