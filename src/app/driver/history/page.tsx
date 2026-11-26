@@ -16,7 +16,7 @@ export default function DriverHistoryPage() {
 
   const trips = (data?.data as any) || [];
   const completedTrips = trips.filter((t: Trip) => t.status === "COMPLETED");
-  const totalEarnings = completedTrips.reduce((acc: number, t: Trip) => acc + (t.fare || 0), 0);
+  const totalEarnings = completedTrips.reduce((acc: number, t: Trip) => acc + (Number(t.fare) || 0), 0);
 
   return (
     <div className="space-y-6">

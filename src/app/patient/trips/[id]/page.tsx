@@ -313,7 +313,7 @@ export default function PatientTripDetailsPage({
             {trip.driver?.currentLat && (
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>GPS Fix:</span>
-                <span>{trip.driver.currentLat.toFixed(4)}, {trip.driver.currentLng?.toFixed(4)}</span>
+                <span>{Number(trip.driver.currentLat).toFixed(4)}, {Number(trip.driver.currentLng || 0).toFixed(4)}</span>
               </div>
             )}
           </CardContent>
@@ -360,7 +360,7 @@ export default function PatientTripDetailsPage({
               <span className="font-extrabold text-2xl text-foreground">৳{trip.fare || 0}</span>
             </div>
             <div className="text-xs text-muted-foreground">
-              Calculated based on {trip.distanceKm ? `${trip.distanceKm.toFixed(2)} km` : "flat base"} distance with {trip.ambulance?.type} life-support equipment.
+              Calculated based on {trip.distanceKm ? `${Number(trip.distanceKm).toFixed(2)} km` : "flat base"} distance with {trip.ambulance?.type} life-support equipment.
             </div>
 
             {trip.payment?.status === "PAID" ? (

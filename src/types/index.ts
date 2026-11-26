@@ -150,8 +150,8 @@ export interface Trip {
   status: TripStatus;
   startedAt?: string | null;
   completedAt?: string | null;
-  distanceKm?: number | null;
-  fare?: number | null;
+  distanceKm?: number | string | null;
+  fare?: number | string | null;
   payment?: Payment | null;
   driverReview?: Review | null;
   createdAt: string;
