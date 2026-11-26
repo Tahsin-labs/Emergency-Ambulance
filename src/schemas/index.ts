@@ -60,9 +60,23 @@ export const driverLocationSchema = z.object({
 export const ambulanceSchema = z.object({
   plateNumber: z.string().min(3, "Plate number is required"),
   type: z.enum(["BASIC", "ADVANCED", "ICU"]),
-  baseFare: z.number().positive("Base fare must be a positive number"),
-  perKmRate: z.number().positive("Per km rate must be a positive number"),
+  baseFare: z.coerce.number().positive("Base fare must be a positive number").default(500),
+  perKmRate: z.coerce.number().positive("Per km rate must be a positive number").default(30),
+  lat: z.coerce.number().min(-90).max(90).optional(),
+  lng: z.coerce.number().min(-180).max(180).optional(),
+  driverId: z.string().uuid("Invalid driver ID").nullable().optional(),
 });
+
+export const ambulanceUpdateSchema = z.object({
+  type: z.enum(["BASIC", "ADVANCED", "ICU"]).optional(),
+  baseFare: z.coerce.number().positive().optional(),
+  perKmRate: z.coerce.number().positive().optional(),
+  status: z.enum(["AVAILABLE", "OFFLINE", "MAINTENANCE"]).optional(),
+  lat: z.coerce.number().min(-90).max(90).optional(),
+  lng: z.coerce.number().min(-180).max(180).optional(),
+  driverId: z.string().uuid().nullable().optional(),
+});
+
 
 export const hospitalSchema = z
   .object({
@@ -92,5 +106,6 @@ export type RegisterInput = z.infer<typeof registerSchema>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type EmergencyRequestInput = z.infer<typeof emergencyRequestSchema>;
 export type AmbulanceInput = z.infer<typeof ambulanceSchema>;
+export type AmbulanceUpdateInput = z.infer<typeof ambulanceUpdateSchema>;
 export type HospitalInput = z.infer<typeof hospitalSchema>;
 export type ReviewInput = z.infer<typeof reviewSchema>;

@@ -122,6 +122,8 @@ export interface Hospital {
 export interface EmergencyRequest {
   id: string;
   patientId: string;
+  patientName?: string;
+  patientPhone?: string;
   patient?: User;
   emergencyType: EmergencyType;
   description: string;
