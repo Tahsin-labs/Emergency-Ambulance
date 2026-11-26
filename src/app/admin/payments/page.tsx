@@ -10,10 +10,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function AdminPaymentsPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-payments"],
-    queryFn: () => apiFetch<{ payments: Payment[] }>("/admin/reports"),
+    queryFn: () => apiFetch<Payment[]>("/payments?limit=50"),
   });
 
-  const payments = (data?.data as any)?.payments || [];
+  const payments = (data?.data as any) || [];
 
   return (
     <div className="space-y-6">

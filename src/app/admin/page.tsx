@@ -13,33 +13,28 @@ import {
 
 export default function AdminDashboardPage() {
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-dashboard"],
-    queryFn: () => apiFetch("/admin/dashboard"),
+    queryKey: ["admin-dashboard-stats"],
+    queryFn: () => apiFetch<any>("/admin/dashboard-stats"),
   });
 
-  const stats = data?.data?.stats || {
-    totalUsers: 14,
-    totalPatients: 8,
-    totalDrivers: 4,
-    totalAmbulances: 4,
-    activeTrips: 1,
-    completedTrips: 5,
-    cancelledTrips: 1,
-    totalRevenue: 15400,
-  };
+  const raw = data?.data;
 
+  const totalRevenue = Number(raw?.revenue?.totalPaid || 0);
+  const activeTrips = Number(raw?.trips?.activeNow || 0);
+  const totalAmbulances = Number(raw?.ambulances?.total || 0);
+  const totalUsers = Number(raw?.users?.total || 0);
+
+  const priorityMap = raw?.requests?.byPriority || {};
   const priorityData = [
-    { name: "CRITICAL", value: 3, color: "#DC2626" },
-    { name: "HIGH", value: 2, color: "#F59E0B" },
-    { name: "MEDIUM", value: 4, color: "#0284C7" },
-    { name: "LOW", value: 1, color: "#16A34A" },
+    { name: "CRITICAL", value: priorityMap["CRITICAL"] || 0, color: "#DC2626" },
+    { name: "HIGH", value: priorityMap["HIGH"] || 0, color: "#F59E0B" },
+    { name: "MEDIUM", value: priorityMap["MEDIUM"] || 0, color: "#0284C7" },
+    { name: "LOW", value: priorityMap["LOW"] || 0, color: "#16A34A" },
   ];
 
   const revenueMonthly = [
-    { month: "Aug", revenue: 8200 },
-    { month: "Sep", revenue: 10400 },
-    { month: "Oct", revenue: 12800 },
-    { month: "Nov", revenue: 15400 },
+    { month: "Pending", revenue: Number(raw?.revenue?.pendingAmount || 0) },
+    { month: "Paid (Settled)", revenue: totalRevenue },
   ];
 
   return (
@@ -61,7 +56,7 @@ export default function AdminDashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 pt-0">
-            <div className="text-2xl font-extrabold">৳{stats.totalRevenue.toLocaleString()}</div>
+            <div className="text-2xl font-extrabold">৳{totalRevenue.toLocaleString()}</div>
             <div className="text-[10px] text-emerald-600 font-semibold mt-1">SSLCommerz settled</div>
           </CardContent>
         </Card>
@@ -74,7 +69,7 @@ export default function AdminDashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 pt-0">
-            <div className="text-2xl font-extrabold text-red-600">{stats.activeTrips}</div>
+            <div className="text-2xl font-extrabold text-red-600">{activeTrips}</div>
             <div className="text-[10px] text-muted-foreground mt-1">Live ambulances on road</div>
           </CardContent>
         </Card>
@@ -87,7 +82,7 @@ export default function AdminDashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 pt-0">
-            <div className="text-2xl font-extrabold">{stats.totalAmbulances}</div>
+            <div className="text-2xl font-extrabold">{totalAmbulances}</div>
             <div className="text-[10px] text-muted-foreground mt-1">Basic, ALS & ICU units</div>
           </CardContent>
         </Card>
@@ -100,7 +95,7 @@ export default function AdminDashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 pt-0">
-            <div className="text-2xl font-extrabold">{stats.totalUsers}</div>
+            <div className="text-2xl font-extrabold">{totalUsers}</div>
             <div className="text-[10px] text-muted-foreground mt-1">Patients & Drivers</div>
           </CardContent>
         </Card>
