@@ -4,7 +4,7 @@ import { use, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
-import { Trip, TripStatus } from "@/types";
+import { Trip, TripStatus, CANCELLABLE_TRIP_STATUSES } from "@/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 
 const TRIP_STEPS: TripStatus[] = [
-  "ACCEPTED",
+  "DISPATCHED",
   "EN_ROUTE",
   "ARRIVED_AT_PICKUP",
   "PICKED_UP",
@@ -43,6 +43,8 @@ export default function PatientTripDetailsPage({
   const router = useRouter();
   const queryClient = useQueryClient();
   const [cancelling, setCancelling] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const [paying, setPaying] = useState(false);
 
   // Poll trip every 4 seconds for live tracking
@@ -60,19 +62,34 @@ export default function PatientTripDetailsPage({
 
   const trip = data?.data;
 
-  // Cancel trip (allowed only before PICKED_UP)
+  // Cancel trip (allowed strictly before PICKED_UP via emergency request cancel endpoint)
   const handleCancel = async () => {
-    if (!confirm("Are you sure you want to cancel this emergency ambulance?")) return;
+    if (!trip) return;
+    const targetRequestId = trip.requestId || trip.request?.id;
+    if (!targetRequestId) {
+      toast.error("Emergency request ID not found on trip record.");
+      return;
+    }
+
+    const trimmedReason = cancelReason.trim();
+    if (trimmedReason.length < 3) {
+      toast.error("Please provide a cancellation reason (minimum 3 characters).");
+      return;
+    }
+
     try {
       setCancelling(true);
-      await apiFetch(`/trips/${id}/cancel`, {
-        method: "PATCH",
-        body: JSON.stringify({ reason: "Patient requested cancellation" }),
+      await apiFetch(`/emergency-requests/${targetRequestId}/cancel`, {
+        method: "POST",
+        body: JSON.stringify({ reason: trimmedReason }),
       });
-      toast.success("Trip has been cancelled.");
+      toast.success("Trip has been cancelled successfully.");
+      setShowCancelModal(false);
       queryClient.invalidateQueries({ queryKey: ["trip", id] });
+      queryClient.invalidateQueries({ queryKey: ["patient-emergency-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications-nav"] });
     } catch (err: any) {
-      toast.error(err.message || "Failed to cancel trip");
+      toast.error(err.message || "Failed to cancel trip. Cancellation is only permitted before pickup.");
     } finally {
       setCancelling(false);
     }
@@ -119,10 +136,7 @@ export default function PatientTripDetailsPage({
   }
 
   const currentStepIndex = TRIP_STEPS.indexOf(trip.status);
-  const canCancel =
-    trip.status === "ACCEPTED" ||
-    trip.status === "EN_ROUTE" ||
-    trip.status === "ARRIVED_AT_PICKUP";
+  const canCancel = CANCELLABLE_TRIP_STATUSES.includes(trip.status);
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -152,19 +166,68 @@ export default function PatientTripDetailsPage({
           <Button
             variant="destructive"
             size="sm"
-            onClick={handleCancel}
+            onClick={() => {
+              setCancelReason("Patient requested cancellation");
+              setShowCancelModal(true);
+            }}
             disabled={cancelling}
           >
-            {cancelling ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-1" />
-            ) : (
-              <AlertOctagon className="h-4 w-4 mr-1" />
-            )}
-            Cancel Request
+            Cancel Ambulance Run
           </Button>
         )}
       </div>
 
+      {/* Cancellation Confirmation Modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-md rounded-xl border bg-card p-6 shadow-2xl space-y-4">
+            <div className="flex items-center gap-2 text-destructive">
+              <AlertOctagon className="h-6 w-6" />
+              <h2 className="text-lg font-bold">Cancel Emergency Ambulance?</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Cancellation is only permitted prior to paramedic pickup. Once the ambulance arrives and picks up the patient, the run cannot be cancelled.
+            </p>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-foreground">
+                Cancellation Reason (Required, min 3 chars):
+              </label>
+              <textarea
+                className="w-full rounded-md border bg-background p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-destructive"
+                rows={3}
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                placeholder="e.g., Condition stabilized, alternative transport arranged..."
+              />
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowCancelModal(false)}
+                disabled={cancelling}
+              >
+                Keep Ambulance
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleCancel}
+                disabled={cancelling || cancelReason.trim().length < 3}
+              >
+                {cancelling ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
+                    Cancelling...
+                  </>
+                ) : (
+                  "Confirm Cancellation"
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Stepper Progress Bar */}
       <Card>
         <CardHeader className="pb-3">

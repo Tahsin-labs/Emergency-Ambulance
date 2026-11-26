@@ -67,7 +67,7 @@ export default function AdminTripsPage() {
               className="text-xs p-1.5 rounded border bg-background"
             >
               <option value="">All Statuses</option>
-              <option value="ACCEPTED">ACCEPTED</option>
+              <option value="DISPATCHED">DISPATCHED</option>
               <option value="EN_ROUTE">EN_ROUTE</option>
               <option value="ARRIVED_AT_PICKUP">ARRIVED_AT_PICKUP</option>
               <option value="PICKED_UP">PICKED_UP</option>

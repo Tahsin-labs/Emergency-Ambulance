@@ -24,10 +24,10 @@ export type EmergencyType =
   | "UNCONSCIOUS"
   | "OTHER";
 
-export type RequestStatus = "PENDING" | "ACCEPTED" | "CANCELLED" | "EXPIRED";
+export type RequestStatus = "PENDING" | "DISPATCHED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
 
 export type TripStatus =
-  | "ACCEPTED"
+  | "DISPATCHED"
   | "EN_ROUTE"
   | "ARRIVED_AT_PICKUP"
   | "PICKED_UP"
@@ -35,6 +35,16 @@ export type TripStatus =
   | "ARRIVED_AT_HOSPITAL"
   | "COMPLETED"
   | "CANCELLED";
+
+/**
+ * Statuses where cancellation is allowed (strictly before PICKED_UP)
+ */
+export const CANCELLABLE_TRIP_STATUSES: TripStatus[] = [
+  "DISPATCHED",
+  "EN_ROUTE",
+  "ARRIVED_AT_PICKUP",
+];
+
 
 export type PaymentStatus = "INITIATED" | "PAID" | "FAILED" | "CANCELLED";
 
