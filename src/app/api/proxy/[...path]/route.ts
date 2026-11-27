@@ -58,45 +58,62 @@ async function handler(
     }
   }
 
-  let response = await fetch(targetUrl.toString(), {
-    method: req.method,
-    headers,
-    body,
-  });
+  let response: Response;
+  try {
+    response = await fetch(targetUrl.toString(), {
+      method: req.method,
+      headers,
+      body,
+      // @ts-ignore
+      cache: "no-store",
+    });
 
-  // Mutex refresh if 401
-  let newAccessToken: string | null = null;
-  if (response.status === 401 && refreshToken) {
-    newAccessToken = await refreshTokens(refreshToken);
+    // Mutex refresh if 401
+    let newAccessToken: string | null = null;
+    if (response.status === 401 && refreshToken) {
+      newAccessToken = await refreshTokens(refreshToken);
+      if (newAccessToken) {
+        headers["Authorization"] = `Bearer ${newAccessToken}`;
+        response = await fetch(targetUrl.toString(), {
+          method: req.method,
+          headers,
+          body,
+          // @ts-ignore
+          cache: "no-store",
+        });
+      }
+    }
+
+    const data = await response.text();
+    const nextRes = new NextResponse(data, {
+      status: response.status,
+      headers: {
+        "Content-Type": response.headers.get("Content-Type") || "application/json",
+      },
+    });
+
     if (newAccessToken) {
-      headers["Authorization"] = `Bearer ${newAccessToken}`;
-      response = await fetch(targetUrl.toString(), {
-        method: req.method,
-        headers,
-        body,
+      nextRes.cookies.set("access_token", newAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 15 * 60,
       });
     }
+
+    return nextRes;
+  } catch (error: any) {
+    console.error("Proxy fetch error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Backend service temporarily unavailable. Please try again shortly.",
+        error: error?.message || "Gateway Error",
+      },
+      { status: 502 }
+    );
   }
-
-  const data = await response.text();
-  const nextRes = new NextResponse(data, {
-    status: response.status,
-    headers: {
-      "Content-Type": response.headers.get("Content-Type") || "application/json",
-    },
-  });
-
-  if (newAccessToken) {
-    nextRes.cookies.set("access_token", newAccessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 15 * 60,
-    });
-  }
-
-  return nextRes;
 }
 
 export const GET = handler;
