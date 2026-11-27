@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/authStore";
 import { Ambulance, Shield, User, Car, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 
 function LoginForm() {
   const router = useRouter();
@@ -145,6 +146,18 @@ function LoginForm() {
                     "Sign In"
                   )}
                 </Button>
+
+                <div className="relative my-2">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                  </div>
+                </div>
+
+                <GoogleAuthButton callbackUrl={callbackUrl} text="signin_with" />
+
                 <div className="text-center text-sm text-muted-foreground">
                   Don&apos;t have an account?{" "}
                   <Link href="/register" className="text-red-600 hover:underline font-medium">

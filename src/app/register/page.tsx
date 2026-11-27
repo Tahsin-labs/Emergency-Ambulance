@@ -14,6 +14,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Ambulance, Loader2, User, Car, ShieldAlert } from "lucide-react";
+import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -218,6 +219,18 @@ export default function RegisterPage() {
                     "Register as Patient"
                   )}
                 </Button>
+
+                <div className="relative my-2">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground">Or sign up with</span>
+                  </div>
+                </div>
+
+                <GoogleAuthButton text="signup_with" />
+
                 <div className="text-center text-sm text-muted-foreground">
                   Already have an account?{" "}
                   <Link href="/login" className="text-red-600 hover:underline font-medium">
