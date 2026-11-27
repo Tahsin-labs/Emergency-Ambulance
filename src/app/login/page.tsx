@@ -54,13 +54,28 @@ function LoginForm() {
       setRole(json.data.user.role);
       toast.success(`Welcome back, ${json.data.user.name}!`);
 
-      if (callbackUrl) {
-        router.push(callbackUrl);
-      } else {
-        if (json.data.user.role === "ADMIN") router.push("/admin");
-        else if (json.data.user.role === "DRIVER") router.push("/driver");
-        else router.push("/patient");
+      // Determine target destination based on role and safe relative callbackUrl
+      const role = json.data.user.role;
+      let targetPath = "/patient";
+      if (role === "ADMIN") targetPath = "/admin";
+      else if (role === "DRIVER") targetPath = "/driver";
+
+      // Only honor callbackUrl if it is a safe relative internal path
+      if (callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")) {
+        // Prevent redirects to unauthorized role areas if callback doesn't match
+        if (
+          (callbackUrl.startsWith("/admin") && role !== "ADMIN") ||
+          (callbackUrl.startsWith("/driver") && role !== "DRIVER") ||
+          (callbackUrl.startsWith("/patient") && role !== "PATIENT")
+        ) {
+          // Fallback to role-specific dashboard
+        } else {
+          targetPath = callbackUrl;
+        }
       }
+
+      router.replace(targetPath);
+      router.refresh();
     } catch (err: any) {
       toast.error(err.message || "Invalid credentials");
     } finally {

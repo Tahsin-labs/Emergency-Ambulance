@@ -6,6 +6,15 @@ export function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("access_token")?.value;
   const userRole = request.cookies.get("user_role")?.value;
 
+  // If authenticated user visits login or register, redirect them to their dashboard
+  const isAuthPage = pathname === "/login" || pathname === "/register";
+  if (isAuthPage && accessToken && userRole) {
+    let dashboard = "/patient";
+    if (userRole === "ADMIN") dashboard = "/admin";
+    else if (userRole === "DRIVER") dashboard = "/driver";
+    return NextResponse.redirect(new URL(dashboard, request.url));
+  }
+
   // Protected paths
   const isAdminPath = pathname.startsWith("/admin");
   const isDriverPath = pathname.startsWith("/driver");
@@ -43,5 +52,12 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/driver/:path*", "/patient/:path*", "/notifications/:path*"],
+  matcher: [
+    "/login",
+    "/register",
+    "/admin/:path*",
+    "/driver/:path*",
+    "/patient/:path*",
+    "/notifications/:path*",
+  ],
 };
