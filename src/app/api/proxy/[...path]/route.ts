@@ -37,7 +37,7 @@ async function handler(
     `${BACKEND_URL}/${path.join("/")}${req.nextUrl.search}`
   );
 
-  let accessToken = req.cookies.get("access_token")?.value;
+  const accessToken = req.cookies.get("access_token")?.value;
   const refreshToken = req.cookies.get("refresh_token")?.value;
 
   const headers: HeadersInit = {};
